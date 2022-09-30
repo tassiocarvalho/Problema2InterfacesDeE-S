@@ -8,7 +8,7 @@
         SVC 0
 .endm
 @------Macro que realiza a inicialização do LCD e o fuction set----@
-.macro Init
+Init
         setDisplay 0, 0, 0, 1, 1   @define o db4=1; db5=1; db6=0; db7=0; rs=0
         nanoSleep timespecnano5    @realiza um delay de 5 milisegundos
 
@@ -44,7 +44,7 @@
         nanoSleep timespecnano150 @realiza um delay de 15 milisegundos
 
         .ltorg @Programas grandes podem exigir vários pools literais. Coloque as diretivas LTORG após ramificações incondicionais ou instruções de retorno de sub-rotina para que o processador não tente executar as constantes como instruções.
-.endm
+bx lr
 
 @----Macro que define os valores dos pinos do LCD on=1 ou off=0----@
 .macro setDisplay addrs, addb7, addb6, addb5, addb4
