@@ -1,12 +1,4 @@
-.global clear
-
-@---------------Macro de nanosleep-------------------@
-.macro delay time       @Receve como parâmetro o tempo em segundos ou nanosegundos
-    LDR R0, =\time      @Carrega em R0 o tempo que o processador deve "dormir"
-    LDR R1, =\time
-    MOV R7, #162        @Move para R7 (Registrador que define qual Syscall será executada) o valor 162 (valor da syscall nanosleep)
-    SWI 0               @Executa a Syscall
-.endm
+.global escreverLcd
 
 @-------Macro que define valores 0 e 1 nos regs------@
 .macro setLvl pin, lvl      @Recebe como parâmero as informações do pino e qual nível lógica colocar no pino
@@ -25,7 +17,7 @@
     STR R0, [R2]            @Armazena no registrador de clear ou set o nível lógico do pino atualizado
 .endm
 
-@Macro que recebe como parâmetro os níveis lógicos a serem definidos nos pinos RS, DB7, DB6, DB5, DB4
+@Macro que Recebe como parâmetro os níveis lógicos a serem definidos nos pinos RS, DB7, DB6, DB5, DB4
 .macro setLcd lvlrs, lvldb7, lvldb6, lvldb5, lvldb4 
 
     setLvl rs, #\lvlrs          @Define o nível lógico de RS (0 para dar comandos e 1 para escrever na LCD)
@@ -41,13 +33,85 @@
     .ltorg                      @Certifica que uma literal pool está dentro da range exigida (sem essa instrução, códigos muito grandes tendem a "estourar" o limite da literal pool)
 .endm                           @Literal pool é a distância entre o valor atual (do reg. PC) da instrução exucutada no momento e o endereço da constante que uma instrução acessa,
 
-@--------Macro que realiza limpeza no display---------@
-clear:
+.macro digit
 
-    setLcd 0, 0, 0, 0, 0
-    delay timespecnano150
-    setLcd 0, 0, 0, 0, 1
-    delay timespecnano150
+    setLvl rs, #1       @Define o nível lógico "1" de RS  36
+    MOV R9, #1          @Move 1 para R9
+    LSL R9, #7
+    AND R1, R9, R10     @Faz um AND entre R9 e o número contido em R10 para verificar o nível lógico do primeiro bit
+    LSR R1, #7
+
+    setLvl db7, R1      @Define o db7 o valor do resgistrador R1
+
+    LSR R9, #1
+    AND R1, R9, R10
+    LSR R1, #6
+
+    setLvl db6, R1      @Define o db6 o valor do resgistrador R1
+
+    LSR R9, #1
+    AND R1, R9, R10
+    LSR R1, #5
+
+    setLvl db5, R1      @Define o db5 o valor do resgistrador R1
+
+    LSR R9, #1
+    AND R1, R9, R10
+    LSR R1, #4
+
+    setLvl db4, R1      @Define o db4 o valor do resgistrador R1
+
+    setLvl e, #0                @Define nível lógico "0" no Enable (fecha o envio de dados nos pinos de dados)
+    delay timespecnano150       @Aplica um delay de 1.5 milisegundos
+    setLvl e, #1                @Define nível lógico "1" no Enable (fecha o envio de dados nos pinos de dados)
+    delay timespecnano150       @Aplica um delay de 1.5 milisegundos
+    setLvl e, #0                @Define nível lógico "0" no Enable (fecha o envio de dados nos pinos de dados)
+
+    setLvl rs, #1       @Define o nível lógico "1" de RS  36
+
+    LSR R9, #1
+    AND R1, R9, R10     @Faz um and entre R9 e o número contido em R10 para verificar o nível lógico do primeiro bit
+    LSR R1, #3
+
+    setLvl db7, R1      @Define o db7 o valor do resgistrador R1
+
+    LSR R9, #1
+    AND R1, R9, R10
+    LSR R1, #2
+
+    setLvl db6, R1      @Define o db6 o valor do resgistrador R1
+
+    LSR R9, #1
+    AND R1, R9, R10
+    LSR R1, #1
+
+    setLvl db5, R1      @Define o db5 o valor do resgistrador R1
+
+    LSR R9, #1
+    AND R1, R9, R10
+
+    setLvl db4, R1      @Define o db4 o valor do resgistrador R1
+
+    setLvl e, #0                @Define nível lógico "0" no Enable (fecha o envio de dados nos pinos de dados)
+    delay timespecnano150       @Aplica um delay de 1.5 milisegundos
+    setLvl e, #1                @Define nível lógico "1" no Enable (fecha o envio de dados nos pinos de dados)
+    delay timespecnano150       @Aplica um delay de 1.5 milisegundos
+    setLvl e, #0                @Define nível lógico "0" no Enable (fecha o envio de dados nos pinos de dados)
+
+.endm
+
+.macro delay time       @Receve como parâmetro o tempo em segundos ou nanosegundos
+    LDR R0, =\time      @Carrega em R0 o tempo que o processador deve "dormir"
+    LDR R1, =\time
+    MOV R7, #162        @Move para R7 (Registrador que define qual Syscall será executada) o valor 162 (valor da syscall nanosleep)
+    SWI 0               @Executa a Syscall
+.endm
+
+escreverLcd:
+
+    MOV R10, R0
+
+    digit
 
     BX LR
 

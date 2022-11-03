@@ -1,6 +1,13 @@
-.global clear
+.equ sys_open, 5        @Valor da syscall de abertura de arquivos
+.equ sys_map, 192       @Valor da syscall de mapeamento de memória (gera endereço virtual)
+.equ page_len, 4096     @Tamanho da memória a ser utilizada para mapear, em número de páginas de memória (4096 = 1 página)
+.equ prot_read, 1       @Flag para modo de leitura do arquivo "\dev\mem"
+.equ prot_write, 2      @Flag para modo de escrita do arquivo "\dev\mem"
+.equ map_shared, 1      @Libera compartilhamento de memória
 
-@---------------Macro de nanosleep-------------------@
+.global iniciarLcd
+
+@----------------------Macro da nano sleep--------------------@
 .macro delay time       @Receve como parâmetro o tempo em segundos ou nanosegundos
     LDR R0, =\time      @Carrega em R0 o tempo que o processador deve "dormir"
     LDR R1, =\time
@@ -8,7 +15,7 @@
     SWI 0               @Executa a Syscall
 .endm
 
-@-------Macro que define valores 0 e 1 nos regs------@
+@------------Macro que define se o pino ta on=1 ou off=0-------@
 .macro setLvl pin, lvl      @Recebe como parâmero as informações do pino e qual nível lógica colocar no pino
     MOV R0, #40             @Move #40 para R0 (40 é o offset do clear register)
     MOV R2, #12             @Move #12 para R2 (12 é a diferença entre os offsets do clear e do set registers)
@@ -41,17 +48,57 @@
     .ltorg                      @Certifica que uma literal pool está dentro da range exigida (sem essa instrução, códigos muito grandes tendem a "estourar" o limite da literal pool)
 .endm                           @Literal pool é a distância entre o valor atual (do reg. PC) da instrução exucutada no momento e o endereço da constante que uma instrução acessa,
 
-@--------Macro que realiza limpeza no display---------@
-clear:
+@realiza mapeamento e inicializa LCD com os parametros
+iniciarLcd:
+    LDR R0, =fileName       @Carrega em R0 o endereço que contém o nome do arquivo ("\dev\mem")
+    MOV R2, #0x1b0
+    ORR R2, #0x006          @Armazena em R2 o hexadecimal #0x1b6 para determinar os modos de abertura (usamos no modo de leitura e escrita)
+    MOV R1, R2
+    MOV R7, #sys_open       @Armazena em R7 o valor da Syscall 5 (Para abertura de arquivos)
+    SWI 0                   @A syscall é executada
+    MOVS R4, R0             @A syscall retorna em R0 o file descriptor (será usado no mapeamento), o file descriptor foi movido para R4
 
+    LDR R5, =gpioaddr       @Carrega em R5 o endereço de memória que contem o endereço base dos GPIO em páginas de memória (0x20200000 \ 4096 = 0x20200)
+    LDR R5, [R5]            @carrega em R5 o endereço dos GPIO (0x20200)
+    MOV R1, #page_len       @Move para R1 a quantidade de memória a usar em páginas de memória (foi usado 4096 bytes ou 1 página de memória)
+    MOV R2, #(prot_read + prot_write)   @Move para R2 os modos de acesso ao arquivo (leitura e escrita)
+    MOV R3, #map_shared     @Define que a memória será compartilhada
+    MOV R0, #0              @Define que o SO poderá definir qual endereço de memória virtual será usado para mapear
+    MOV R7, #sys_map        @Define a syscall de mapeamento no R7
+    SWI 0                   @Executa a syscall de mapeamento
+    MOVS R8, R0             @O endereço virtual gerado é retornado em R0, em seguida é movido para R8
+
+    setLcd 0, 0, 0, 1, 1        @Comando de function set
+    delay timespecnano5         @Delay de 5 milisegundos
+
+    setLcd 0, 0, 0, 1, 1        @Comando de function set
+
+    setLcd 0, 0, 0, 1, 1        @Comando de function set que muda o modo de operação da LCD para 4 bits
+    setLcd 0, 0, 0, 1, 0
+
+    setLcd 0, 0, 0, 1, 0        @Comando de function set que define número de linhas e a fonte a ser usada pelo LCD
     setLcd 0, 0, 0, 0, 0
-    delay timespecnano150
+
+    setLcd 0, 0, 0, 0, 0        @Comando que desliga o display
+    setLcd 0, 1, 0, 0, 0
+
+    setLcd 0, 0, 0, 0, 0        @Comando que limpa o display
     setLcd 0, 0, 0, 0, 1
-    delay timespecnano150
+
+    setLcd 0, 0, 0, 0, 0        @Comando de entry mode set (shift do cursor para direita e o endereço foi configurado para incremento)
+    setLcd 0, 0, 1, 1, 0
+
+    setLcd 0, 0, 0, 0, 0        @Comando para Ligar o display e o cursor
+    setLcd 0, 1, 1, 1, 0
+
+    setLcd 0, 0, 0, 0, 0        @Comando de entry mode set (shift do cursor para direita e o endereço foi configurado para incremento)
+    setLcd 0, 0, 1, 1, 0
 
     BX LR
 
 .data
+fileName: .asciz "/dev/mem"     @Diretório usado para o mapeamento de memória
+gpioaddr: .word 0x20200         @Endereço dos GPIO / 4096
 timespecnano5: .word 0          @Delay de 5 milisegundos
                 .word 5000000
 timespecnano150: .word 0        @Delay de 1.5 milisegundos
