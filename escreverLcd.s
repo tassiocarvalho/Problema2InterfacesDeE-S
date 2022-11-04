@@ -1,24 +1,22 @@
 .global escreverLcd
 
-@-------Macro que define valores 0 e 1 nos regs------@
 .macro setLvl pin, lvl      @Recebe como parâmero as informações do pino e qual nível lógica colocar no pino
-    MOV R0, #40             @Move #40 para R0 (40 é o offset do clear register)
-    MOV R2, #12             @Move #12 para R2 (12 é a diferença entre os offsets do clear e do set registers)
-    MOV R1, \lvl            @Move para R1 o valor do nível lógico desejado
-    MUL R5, R1, R2          @Multiplica 12 pelo nível lógico recebido
-    SUB R0, R0, R5          @Subtrai 40 pelo resultado obtido na operação anterior
-    MOV R2, R8              @Move o endereço base dos GPIO obtido no mapeamento para o R2
-    ADD R2, R2, R0          @Soma a esse endereço o offset calculado nas operações anteriores, podendo ser 28 (set register) ou 40 (clear register)
-    MOV R0, #1              @Move #1 para R0
-    LDR R3, =\pin           @Carrega o endereço de memória contendo o offset do GPFSel em R3
-    ADD R3, #8              @Adiciona 8 a esse endereço, para obter o endereço que contém a posição do bit responsável por definir o nível lógico daquele pino específico
-    LDR R3, [R3]            @Carrega o valor contido nesse endereço em R3
-    LSL R0, R3              @Desloca o bit colocado em R0 para a posição obtida na operação anterior
-    STR R0, [R2]            @Armazena no registrador de clear ou set o nível lógico do pino atualizado
+    mov r0, #40             @Move #40 para R0 (40 é o offset do clear register)
+    mov r2, #12             @Move #12 para R2 (12 é a diferença entre os offsets do clear e do set registers)
+    mov r1, \lvl            @Move para R1 o valor do nível lógico desejado
+    mul r5, r1, r2          @Multiplica 12 pelo nível lógico recebido
+    sub r0, r0, r5          @Subtrai 40 pelo resultado obtido na operação anterior
+    mov r2, r8              @Move o endereço base dos GPIO obtido no mapeamento para o R2
+    add r2, r2, r0          @Soma a esse endereço o offset calculado nas operações anteriores, podendo ser 28 (set register) ou 40 (clear register)
+    mov r0, #1              @Move #1 para R0
+    ldr r3, =\pin           @Carrega o endereço de memória contendo o offset do GPFSel em R3
+    add r3, #8              @Adiciona 8 a esse endereço, para obter o endereço que contém a posição do bit responsável por definir o nível lógico daquele pino específico
+    ldr r3, [r3]            @Carrega o valor contido nesse endereço em R3
+    lsl r0, r3              @Desloca o bit colocado em R0 para a posição obtida na operação anterior
+    str r0, [r2]            @Armazena no registrador de clear ou set o nível lógico do pino atualizado
 .endm
 
-@Macro que Recebe como parâmetro os níveis lógicos a serem definidos nos pinos RS, DB7, DB6, DB5, DB4
-.macro setLcd lvlrs, lvldb7, lvldb6, lvldb5, lvldb4 
+.macro setLcd lvlrs, lvldb7, lvldb6, lvldb5, lvldb4 @Recebe como parâmetro os níveis lógicos a serem definidos nos pinos RS, DB7, DB6, DB5, DB4
 
     setLvl rs, #\lvlrs          @Define o nível lógico de RS (0 para dar comandos e 1 para escrever na LCD)
     setLvl db7, #\lvldb7        @Define o nível lógico de DB7
@@ -36,30 +34,30 @@
 .macro digit
 
     setLvl rs, #1       @Define o nível lógico "1" de RS  36
-    MOV R9, #1          @Move 1 para R9
-    LSL R9, #7
-    AND R1, R9, R10     @Faz um AND entre R9 e o número contido em R10 para verificar o nível lógico do primeiro bit
-    LSR R1, #7
+        mov r9, #1          @Move 1 para R9
+    lsl r9, #7
+        and r1, r9, r10     @Faz um and entre R9 e o número contido em R10 para verificar o nível lógico do primeiro bit
+    lsr r1, #7
 
-    setLvl db7, R1      @Define o db7 o valor do resgistrador R1
+    setLvl db7, r1
 
-    LSR R9, #1
-    AND R1, R9, R10
-    LSR R1, #6
+    lsr r9, #1
+        and r1, r9, r10
+    lsr r1, #6
 
-    setLvl db6, R1      @Define o db6 o valor do resgistrador R1
+        setLvl db6, r1
 
-    LSR R9, #1
-    AND R1, R9, R10
-    LSR R1, #5
+        lsr r9, #1
+        and r1, r9, r10
+    lsr r1, #5
 
-    setLvl db5, R1      @Define o db5 o valor do resgistrador R1
+        setLvl db5, r1
 
-    LSR R9, #1
-    AND R1, R9, R10
-    LSR R1, #4
+        lsr r9, #1
+        and r1, r9, r10
+    lsr r1, #4
 
-    setLvl db4, R1      @Define o db4 o valor do resgistrador R1
+        setLvl db4, r1
 
     setLvl e, #0                @Define nível lógico "0" no Enable (fecha o envio de dados nos pinos de dados)
     delay timespecnano150       @Aplica um delay de 1.5 milisegundos
@@ -69,28 +67,28 @@
 
     setLvl rs, #1       @Define o nível lógico "1" de RS  36
 
-    LSR R9, #1
-    AND R1, R9, R10     @Faz um and entre R9 e o número contido em R10 para verificar o nível lógico do primeiro bit
-    LSR R1, #3
+    lsr r9, #1
+        and r1, r9, r10     @Faz um and entre R9 e o número contido em R10 para verificar o nível lógico do primeiro bit
+    lsr r1, #3
 
-    setLvl db7, R1      @Define o db7 o valor do resgistrador R1
+    setLvl db7, r1
 
-    LSR R9, #1
-    AND R1, R9, R10
-    LSR R1, #2
+    lsr r9, #1
+        and r1, r9, r10
+    lsr r1, #2
 
-    setLvl db6, R1      @Define o db6 o valor do resgistrador R1
+        setLvl db6, r1
 
-    LSR R9, #1
-    AND R1, R9, R10
-    LSR R1, #1
+        lsr r9, #1
+        and r1, r9, r10
+    lsr r1, #1
 
-    setLvl db5, R1      @Define o db5 o valor do resgistrador R1
+        setLvl db5, r1
 
-    LSR R9, #1
-    AND R1, R9, R10
+        lsr r9, #1
+        and r1, r9, r10
 
-    setLvl db4, R1      @Define o db4 o valor do resgistrador R1
+        setLvl db4, r1
 
     setLvl e, #0                @Define nível lógico "0" no Enable (fecha o envio de dados nos pinos de dados)
     delay timespecnano150       @Aplica um delay de 1.5 milisegundos
@@ -101,19 +99,19 @@
 .endm
 
 .macro delay time       @Receve como parâmetro o tempo em segundos ou nanosegundos
-    LDR R0, =\time      @Carrega em R0 o tempo que o processador deve "dormir"
-    LDR R1, =\time
-    MOV R7, #162        @Move para R7 (Registrador que define qual Syscall será executada) o valor 162 (valor da syscall nanosleep)
-    SWI 0               @Executa a Syscall
+    ldr r0, =\time      @Carrega em R0 o tempo que o processador deve "dormir"
+    ldr r1, =\time
+    mov r7, #162        @Move para R7 (Registrador que define qual Syscall será executada) o valor 162 (valor da syscall nanosleep)
+    swi 0               @Executa a Syscall
 .endm
 
 escreverLcd:
 
-    MOV R10, R0
+    mov r10, r0
 
     digit
 
-    BX LR
+    bx lr
 
 .data
 timespecnano5: .word 0          @Delay de 5 milisegundos

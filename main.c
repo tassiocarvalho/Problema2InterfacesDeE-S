@@ -54,8 +54,8 @@ void setting_uart(){
 }
 
 void commando_tx(unsigned char com, unsigned char addr){
-    //printf("com: %d\n", com);
-    //printf("addr: %d\n", addr);
+    printf("com: %d\n", com);
+    printf("addr: %d\n", addr);
     unsigned char tx_buffer[10];
     unsigned char *p_tx_buffer;
 
@@ -65,7 +65,7 @@ void commando_tx(unsigned char com, unsigned char addr){
 
 if (uart0_filestream != -1){
     int cont = write(uart0_filestream, &tx_buffer[0], (p_tx_buffer - &tx_buffer[0]));
-        //printf("cont: %d\n", cont);
+        printf("cont: %d\n", cont);
     if(cont < 0){
         printf("Erro no envio de dados\n");
                 }
@@ -97,20 +97,35 @@ unsigned char comando_rx(){
         }else if(rx_buffer[0] == 0x51){
         escrever_char("Led apagada");
         }else if(rx_buffer[0] == 0x02){
-        escrever_char("LVL D0: LOW");
+        escrever_char("LVL Sensor: 1");
         }else if(rx_buffer[0] == 0x08){
-        escrever_char("LVL D0: HIGH");
+        escrever_char("LVL Sensor: 0");
         }else if(rx_buffer[0] == 0x01){
         escrever_char("Voltagem:");
         rx_buffer[0] = ' ';
         escrever_char(rx_buffer);
-        }else if(rx_buffer[0] == 0x12){
-        escrever_char("LVL D1: LOW");
-        }else if(rx_buffer[0] == 0x13){
-        escrever_char("LVL D1: HIGH");
         }
 }
 
+unsigned char addr(){
+        int valor = 0;
+        printf("\n\nEscolha o sensor: \n");
+        printf("[1] -> Sensor D0: \n");
+        printf("[2] -> Sensor D1: \n");
+        scanf("%d", &valor);
+        switch(valor){
+        case 1:{
+                return 0x18;
+                }
+        case 2:{
+                return 0x19;
+                }
+        default:{
+                printf("Valor inválido\n\n");
+                break;
+                }
+        }
+}
 int main(int argc, const char * argv[]){
 
         mapear();
@@ -143,36 +158,43 @@ int main(int argc, const char * argv[]){
             case 1:{
                 commando_tx(GET_NODEMCU_SITUACAO, 0);
                 clear();
+                sleep(2);
                 comando_rx();
                 break;
             }
             case 2:{
                 commando_tx(GET_NODEMCU_ANALOGICO_INPUT, 0);
                 clear();
+                sleep(2);
                 comando_rx();
                 break;
             }
             case 3:{
-                commando_tx(GET_NODEMCU_DIGITAL_INPUT, 0);
+                unsigned char digital_addr = addr();
+                commando_tx(GET_NODEMCU_DIGITAL_INPUT, digital_addr);
                 clear();
+                sleep(2);
                 comando_rx();
                 break;
             }
             case 4:{
                 commando_tx(GET_NODEMCU_DIGITAL_INPUT2, 0);
                 clear();
+                sleep(2);
                 comando_rx();
                 break;
             }
             case 5:{
                 commando_tx(SET_ON_LED_NODEMCU, 0);
                 clear();
+                sleep(2);
                 comando_rx();
                 break;
             }
             case 6:{
                 commando_tx(SET_OFF_LED_NODEMCU, 0);
                 clear();
+                sleep(2);
                 comando_rx();
                 break;
             }

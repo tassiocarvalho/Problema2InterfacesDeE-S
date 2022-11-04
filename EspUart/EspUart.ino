@@ -12,7 +12,8 @@
 unsigned char comResposta = 0x00;
 unsigned char addrResposta = 0x00;
 
-byte byte_read;
+byte byte_com;
+byte byte_addr;
 float voltagem;
 
 // Definições de rede
@@ -113,7 +114,8 @@ void setup() {
   pinMode(A0, INPUT);
   code_uploaded();
   OTA_setup(); 
-  byte_read = -1;
+  byte_com = -1;
+  byte_addr = -1;
   pinMode(LED_BUILTIN,OUTPUT);
   digitalWrite(LED_BUILTIN,HIGH);
   Serial.begin(9600);
@@ -123,50 +125,64 @@ void loop() {
   ArduinoOTA.handle();
 
   if(Serial.available() > 0){
-    byte_read = Serial.read();
-    
+    byte_com = Serial.read();   //byte de comando
+    delay(500);
+    byte_addr = Serial.read();
   }
 
 
-    switch(byte_read){
+    switch(byte_com){
     case 0x03:
-      byte_read = 0x00;
-      Serial.write(byte_read);
+      byte_com = 0x00;
+      Serial.write(byte_com);
       break;
     case 0x04: //analógica
       digitalWrite(LED_BUILTIN,HIGH);
       voltagem = analogRead(A0)*(3.3/1023.0);
-      byte_read = 0x01;
-      Serial.write(byte_read);
+      byte_com = 0x01;
+      Serial.write(byte_com);
       Serial.print(voltagem);
       break;
     case 0x05:  //digitais
-      if (digitalRead(D0)==0){
-        byte_read = 0x02;
-        Serial.write(byte_read);
-      }else{
-        byte_read = 0x08;
-        Serial.write(byte_read);
+      switch(byte_addr){
+        case 0x18:
+          if (digitalRead(D0)==0){
+            byte_com = 0x02;
+            Serial.write(byte_com);
+          }else{
+            byte_com = 0x08;
+            Serial.write(byte_com);
+          }
+          break;
+        case 0x19:
+          if (digitalRead(D1)==0){
+            byte_com = 0x02;
+            Serial.write(byte_com);
+          }else{
+            byte_com = 0x08;
+            Serial.write(byte_com);
+          }
+          break;
       }
       break;
     case 0x11:  //digitais
       if (digitalRead(D1)==0){
-        byte_read = 0x12;
-        Serial.write(byte_read);
+        byte_com = 0x12;
+        Serial.write(byte_com);
       }else{
-        byte_read = 0x13;
-        Serial.write(byte_read);
+        byte_com = 0x13;
+        Serial.write(byte_com);
       }
       break;
     case 0x06:
       digitalWrite(LED_BUILTIN,LOW);
-      byte_read = 0x50;
-      Serial.write(byte_read);
+      byte_com = 0x50;
+      Serial.write(byte_com);
       break;
     case 0x07:
       digitalWrite(LED_BUILTIN,HIGH);
-      byte_read = 0x51;
-      Serial.write(byte_read);
+      byte_com = 0x51;
+      Serial.write(byte_com);
       break;
   }
 }
