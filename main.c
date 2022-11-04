@@ -9,7 +9,6 @@
 #define GET_NODEMCU_SITUACAO 0x03
 #define GET_NODEMCU_ANALOGICO_INPUT 0x04
 #define GET_NODEMCU_DIGITAL_INPUT 0x05
-#define GET_NODEMCU_DIGITAL_INPUT2 0x11
 #define SET_ON_LED_NODEMCU 0x06
 #define SET_OFF_LED_NODEMCU 0x07
 
@@ -79,7 +78,7 @@ unsigned char comando_rx(){
         printf("tamanho do buffer: %d\n", rx_length);
     if (rx_length < 0){
         printf("Erro na leitura\n");
-        escrever_char("StatusNODE: Problema");
+        escrever_char("Status: Problema");
     }
     else if(rx_length == 0){
         printf("Nenhum dado disponível\n");
@@ -112,6 +111,7 @@ unsigned char addr(){
         printf("\n\nEscolha o sensor: \n");
         printf("[1] -> Sensor D0: \n");
         printf("[2] -> Sensor D1: \n");
+        printf("[3] -> Sensor D2: \n");
         scanf("%d", &valor);
         switch(valor){
         case 1:{
@@ -120,6 +120,9 @@ unsigned char addr(){
         case 2:{
                 return 0x19;
                 }
+        case 3:{
+                return 0x20;
+        }
         default:{
                 printf("Valor inválido\n\n");
                 break;
@@ -131,7 +134,7 @@ int main(int argc, const char * argv[]){
         mapear();
         iniciarLcd();
         setting_uart();
-        escrever_char("PBL-SD");
+        escrever_char("    PBL-SD");
 
         int valor;
         int enquanto = 1;
@@ -141,16 +144,16 @@ int main(int argc, const char * argv[]){
         printf("#----------------------------------------#\n");
         printf("[1] -> Estado do NodeMCU;\n");
         printf("[2] -> Estado do sensor analogico; \n");
-        printf("[3] -> Estado do sensor digital D0;\n");
-        printf("[4] -> Estado do Sensor digital D1;\n");
-        printf("[5] -> Ligar Led;\n");
-        printf("[6] -> Apagar Led;\n");
-        printf("[7] -> Limpar display;\n");
-        printf("[8] -> Sair.\n");
+        printf("[3] -> Estado do sensores digitais;\n");
+        //printf("[4] -> Estado do Sensor digital D1;\n");
+        printf("[4] -> Ligar Led;\n");
+        printf("[5] -> Apagar Led;\n");
+        printf("[6] -> Limpar display;\n");
+        printf("[7] -> Sair.\n");
         printf("#----------------------------------------#\n");
         scanf("%d", &valor);
 
-        if(valor == 8 ){
+        if(valor == 7 ){
             break;
         }
 
@@ -178,27 +181,20 @@ int main(int argc, const char * argv[]){
                 break;
             }
             case 4:{
-                commando_tx(GET_NODEMCU_DIGITAL_INPUT2, 0);
-                clear();
-                sleep(2);
-                comando_rx();
-                break;
-            }
-            case 5:{
                 commando_tx(SET_ON_LED_NODEMCU, 0);
                 clear();
                 sleep(2);
                 comando_rx();
                 break;
             }
-            case 6:{
+            case 5:{
                 commando_tx(SET_OFF_LED_NODEMCU, 0);
                 clear();
                 sleep(2);
                 comando_rx();
                 break;
             }
-            case 7:{
+            case 6:{
                 clear();
                 break;
             }

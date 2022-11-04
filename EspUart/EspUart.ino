@@ -111,6 +111,7 @@ void OTA_setup(){
 void setup() {
   pinMode(D0, INPUT);
   pinMode(D1, INPUT);
+  pinMode(D2, INPUT);
   pinMode(A0, INPUT);
   code_uploaded();
   OTA_setup(); 
@@ -163,6 +164,15 @@ void loop() {
             Serial.write(byte_com);
           }
           break;
+        case 0x20:
+          if (digitalRead(D2)==0){
+            byte_com = 0x02;
+            Serial.write(byte_com);
+          }else{
+            byte_com = 0x08;
+            Serial.write(byte_com);
+          }
+          break;
       }
       break;
     case 0x11:  //digitais
@@ -175,11 +185,13 @@ void loop() {
       }
       break;
     case 0x06:
+      delay(1);
       digitalWrite(LED_BUILTIN,LOW);
       byte_com = 0x50;
       Serial.write(byte_com);
       break;
     case 0x07:
+      delay(1);
       digitalWrite(LED_BUILTIN,HIGH);
       byte_com = 0x51;
       Serial.write(byte_com);
