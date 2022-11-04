@@ -54,8 +54,8 @@ void setting_uart(){
 }
 
 void commando_tx(unsigned char com, unsigned char addr){
-    printf("com: %d\n", com);
-    printf("addr: %d\n", addr);
+    //printf("com: %d\n", com);
+    //printf("addr: %d\n", addr);
     unsigned char tx_buffer[10];
     unsigned char *p_tx_buffer;
 
@@ -65,7 +65,7 @@ void commando_tx(unsigned char com, unsigned char addr){
 
 if (uart0_filestream != -1){
     int cont = write(uart0_filestream, &tx_buffer[0], (p_tx_buffer - &tx_buffer[0]));
-        printf("cont: %d\n", cont);
+        //printf("cont: %d\n", cont);
     if(cont < 0){
         printf("Erro no envio de dados\n");
                 }
