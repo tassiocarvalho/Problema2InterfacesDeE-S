@@ -37,72 +37,69 @@ void setting_uart(){ //Funcao responsavel por configurar o UART
     struct termios options; //Cria uma struct para configurar o funcionamento da UART
     tcgetattr(uart0_filestream, &options); //Obtem os parametros associados ao descritor de arquivo e os armazena na struct termios criado anteriormente
 
-    options.c_cflag = B9600 | CS8 | CLOCAL | CREAD;
-    options.c_iflag = IGNPAR;
+    options.c_cflag = B9600 | CS8 | CLOCAL | CREAD; //#baundrate de 9600, #palabras de 8 bits, #permite leitura
+    options.c_iflag = IGNPAR; //ignora bit de paridade
     options.c_oflag = 0;
     options.c_lflag = 0;
 
-    tcflush(uart0_filestream, TCIFLUSH);
+    tcflush(uart0_filestream, TCIFLUSH); //Funcao que descarta dados da descricao do arquivo que nao foram lidos
     tcsetattr(uart0_filestream, TCSANOW, &options);
 }
 
-void commando_tx(unsigned char com, unsigned char addr){
-    //printf("com: %d\n", com);
-    //printf("addr: %d\n", addr);
-    unsigned char tx_buffer[10];
-    unsigned char *p_tx_buffer;
+void commando_tx(unsigned char com, unsigned char addr){ //Funcao para envio dos bytes, tem como parametro o byte do comando e o de endereco
+    
+    unsigned char tx_buffer[10]; //Cria array de bytes
+    unsigned char *p_tx_buffer; //Cria ponteiro para apontar pra array
 
-    p_tx_buffer = &tx_buffer[0];
-    *p_tx_buffer++ = com;
-    *p_tx_buffer++ = addr;
+    p_tx_buffer = &tx_buffer[0]; //Ponteiro apontando para primeiro item da lista, de indice 0
+    *p_tx_buffer++ = com; //No indice 1 coloca o parametro comando
+    *p_tx_buffer++ = addr; //No indice 2 coloca o parametro endereco
 
-if (uart0_filestream != -1){
-    int cont = write(uart0_filestream, &tx_buffer[0], (p_tx_buffer - &tx_buffer[0]));
-        //printf("cont: %d\n", cont);
-    if(cont < 0){
+    if (uart0_filestream != -1){ //Se encontrar o arquivo
+        int cont = write(uart0_filestream, &tx_buffer[0], (p_tx_buffer - &tx_buffer[0])); //Chama a funcao que enviar os dados via serial tendo como parametro a descricao do arquivo e quantidade de bytes
+    
+    } else { //Se não encontrar o arquivo printa o erro
         printf("Erro no envio de dados\n");
-                }
-        }
+    }
 }
 
-unsigned char comando_rx(){
-    unsigned char rx_buffer[100];
-    int rx_length = read(uart0_filestream, (void*)rx_buffer, 100);
+unsigned char comando_rx(){ //Funcao responsavel por receber os dados via serial
+    unsigned char rx_buffer[100]; //Criacao do buffer que recebe os dados
+    int rx_length = read(uart0_filestream, (void*)rx_buffer, 100); //Chama funcao de leitura tendo como parametro a descricao do arquivo, um ponteiro que aponta o o primeiro elemento do buffer e o tamanho do mesmo
 
-        //printf("tamanho do buffer: %d\n", rx_length);
-    if (rx_length < 0){
+    if (rx_length < 0){ //Se houver problema na leitura retornará -1, printa o erro e escreve o problema no LCD
         printf("Erro na leitura\n");
         escrever_char("Status: Problema");
     }
-    else if(rx_length == 0){
+    else if(rx_length == 0){ //Se não houver erro mas não tiver dados para ler printa a mensagem
         printf("Nenhum dado disponível\n");
     }
-    else{
-        rx_buffer[rx_length] = '\0';
-        //printf("%s",rx_buffer);
+    else{ //Se não houver erro e tiver dados 
+        rx_buffer[rx_length] = '\0'; //Coloca o byte '\0' para finalizar a string no segundo byte
     }
-        if(rx_buffer[0] == 0x00){
-        escrever_char("Status: ok!");
-        }else if(rx_buffer[0] == 0x1F){
-        escrever_char("Status: Problema");
-        }else if(rx_buffer[0] == 0x50){
-        escrever_char("Led acesa");
-        }else if(rx_buffer[0] == 0x51){
-        escrever_char("Led apagada");
-        }else if(rx_buffer[0] == 0x02){
-        escrever_char("LVL Sensor: 0");
-        }else if(rx_buffer[0] == 0x08){
-        escrever_char("LVL Sensor: 1");
-        }else if(rx_buffer[0] == 0x01){
-        escrever_char("Voltagem:");
-        rx_buffer[0] = ' ';
-        escrever_char(rx_buffer);
-        }
+
+    if(rx_buffer[0] == 0x00){ //Verifica se o NodeMCU esta recebendo dados do ESP
+    escrever_char("Status: ok!"); //Escreve 'status: ok' no LCD
+    }else if(rx_buffer[0] == 0x1F){ //Verifica se o NodeMCU esta com problema
+    escrever_char("Status: Problema"); //Escreve o 'status:problema' no LCD
+    }else if(rx_buffer[0] == 0x50){ //Verifica se a LED do NodeMCU esta acesa
+    escrever_char("Led acesa"); //Escreve 'led acesa' no LED
+    }else if(rx_buffer[0] == 0x51){ //Verifica se a LED do NodeMCU esta apagada
+    escrever_char("Led apagada"); //Escreve 'led apagada' no LCD
+    }else if(rx_buffer[0] == 0x02){ //Verifica se o sensor esta com nivel logico baixo
+    escrever_char("LVL Sensor: 0"); //Escreve 'lvl sensor: o' no LCD
+    }else if(rx_buffer[0] == 0x08){ //Verifica se o sensor esta com nivel logico alto
+    escrever_char("LVL Sensor: 1"); //Escreve 'lvl sensor: 1' no LCD
+    }else if(rx_buffer[0] == 0x01){ //Verifica se o comando de resposta é o código do sensor analógico
+    escrever_char("Voltagem:"); //Escreve 'voltagem' no LCD
+    rx_buffer[0] = ' '; //Substitui o primeiro elemento do buffer que é um '0x01' por um ' '
+    escrever_char(rx_buffer); //Es reve o valor da ESP no LCD
+    }
 }
 
-unsigned char addr(){
-        int valor = 0;
-        printf("\n\nEscolha o sensor: \n");
+unsigned char addr(){ //Funcao para obter o endereco do sensor escolhido pelo usuario
+        int valor = 0; //Variavel que aarmazena o valor que o usuario inserir
+        printf("\n\nEscolha o sensor: \n"); //Menu de opcoes
         printf("[1] -> Sensor D0: \n");
         printf("[2] -> Sensor D1: \n");
         printf("[3] -> Sensor D2: \n");
@@ -111,8 +108,8 @@ unsigned char addr(){
         printf("[6] -> Sensor D5: \n");
         printf("[7] -> Sensor D6: \n");
         printf("[8] -> Sensor D7: \n");
-        scanf("%d", &valor);
-        switch(valor){
+        scanf("%d", &valor); //Leitura de dados do usuario
+        switch(valor){ //A partir da opcao escolhida pelo usuario retornara uma das opcoes a seguir
         case 1:{
                 return 0x18;
                 }
@@ -137,83 +134,83 @@ unsigned char addr(){
         case 8:{
                 return 0x25;
         }
-        default:{
+        default:{ //Caso o usuario digite um valor que nao esta no menu de opcoes a mensagem 'valor invalido' aparecera
                 printf("Valor inválido\n\n");
                 break;
                 }
         }
 }
-int main(int argc, const char * argv[]){
 
-        mapear();
+int main(int argc, const char * argv[]){ //Funcao principal do codigo
+
+        mapear(); //Inicializando as bibliotecas importadas anteriormente
         iniciarLcd();
         setting_uart();
         escrever_char("    PBL-SD");
 
-        int valor;
-        int enquanto = 1;
+        int valor; //Variavel que armazena o valor digitado pelo usuario
+        int enquanto = 1; //Condicao para o loop
 
         while(enquanto){
-        printf("\n          Seleciona a operação:\n\n");
+        printf("\n          Seleciona a operação:\n\n"); //Menu de opcoes a serem escolhidos pelo usuario
         printf("#----------------------------------------#\n");
         printf("[1] -> Estado do NodeMCU;\n");
         printf("[2] -> Estado do sensor analogico; \n");
         printf("[3] -> Estado do sensores digitais;\n");
-        //printf("[4] -> Estado do Sensor digital D1;\n");
         printf("[4] -> Ligar Led;\n");
         printf("[5] -> Apagar Led;\n");
         printf("[6] -> Limpar display;\n");
         printf("[7] -> Sair.\n");
         printf("#----------------------------------------#\n");
-        scanf("%d", &valor);
+        scanf("%d", &valor); //Entrada de dados do usuario
 
-        if(valor == 7 ){
+        if(valor == 7 ){ //Opcao para sair do programa
             break;
         }
 
         switch(valor){
-            case 1:{
-                commando_tx(GET_NODEMCU_SITUACAO, 0);
-                clear();
-                sleep(2);
-                comando_rx();
+            case 1:{ //Informa situacao NodeMCU
+                commando_tx(GET_NODEMCU_SITUACAO, 0); //Funcao que envia o comando e o endereço
+                clear(); //Funcao limpa o LCD
+                sleep(2); //Delay de 2 segundos
+                comando_rx(); //Funcao recebe os dados
                 break;
             }
-            case 2:{
+            case 2:{ //Informa sinal analogico do NodeMCU
                 commando_tx(GET_NODEMCU_ANALOGICO_INPUT, 0);
                 clear();
                 sleep(2);
                 comando_rx();
                 break;
             }
-            case 3:{
-                unsigned char digital_addr = addr();
+            case 3:{ //Informa sinal digital do NodeMCU
+                unsigned char digital_addr = addr(); //Obtem o endereco do sensor digital especificado pelo usuario e envia como parametro a seguir
                 commando_tx(GET_NODEMCU_DIGITAL_INPUT, digital_addr);
                 clear();
                 sleep(2);
                 comando_rx();
                 break;
             }
-            case 4:{
+            case 4:{ //Liga led do NodeMCU
                 commando_tx(SET_ON_LED_NODEMCU, 0);
                 clear();
                 sleep(2);
                 comando_rx();
                 break;
             }
-            case 5:{
+            case 5:{ //Desliga led do NodeMCU
                 commando_tx(SET_OFF_LED_NODEMCU, 0);
                 clear();
                 sleep(2);
                 comando_rx();
                 break;
             }
-            case 6:{
+            case 6:{ //Limpa LCD
                 clear();
                 break;
             }
 
-            default: {
+            default: { //Finaliza operacao poe ser opcao invalida
                 printf("Operação finalizada!\n");
                 break;
             }
@@ -221,6 +218,6 @@ int main(int argc, const char * argv[]){
 
     }
 
-    close(uart0_filestream);
+    close(uart0_filestream); //Fechando arquivo do terminal UART
     return 0;
 }
