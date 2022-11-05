@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stdio.h> //Importando bibliotecas (linha 1 a 7)
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
@@ -6,36 +6,36 @@
 #include <fcntl.h>
 #include <termios.h>
 
-#define GET_NODEMCU_SITUACAO 0x03
-#define GET_NODEMCU_ANALOGICO_INPUT 0x04
-#define GET_NODEMCU_DIGITAL_INPUT 0x05
-#define SET_ON_LED_NODEMCU 0x06
-#define SET_OFF_LED_NODEMCU 0x07
+#define GET_NODEMCU_SITUACAO 0x03 //Definindo um valor que nao pode ser alterado, nesse caso a situacao do NodeMCU
+#define GET_NODEMCU_ANALOGICO_INPUT 0x04 //Define constante do sinal analogico do NodeMCU
+#define GET_NODEMCU_DIGITAL_INPUT 0x05 //Define constante do sinal digital do NodeMCU
+#define SET_ON_LED_NODEMCU 0x06 //Constante que liga a LED do NodeMCU
+#define SET_OFF_LED_NODEMCU 0x07 //Constante que desliga a LED do NodeMCU
 
-extern void mapear();
-extern void iniciarLcd();
-extern void clear();
-extern void escreverLcd(int a);
+extern void mapear(); //Biblioteca que possibilita mapear o LCD
+extern void iniciarLcd(); //Biblioteca responsavel por iniciar o LCD
+extern void clear(); //Biblioteca responsavel por limpar o LCD
+extern void escreverLcd(int a); //Biblioteca responsavel por escrever caracteres no LCD
 
-int uart0_filestream = -1;
+int uart0_filestream = -1; // Define tipo e valor a variavel uart0_filestream
 
-void escrever_char(char word[]){
+void escrever_char(char word[]){ //Funcao responsavel por escrever caracter no LCD
 
-    for (int i=0; i<strlen(word); i++){
-        escreverLcd(word[i]);
+    for (int i=0; i<strlen(word); i++){ //Percorre a string
+        escreverLcd(word[i]); //Escreve no LCD
     }
 }
 
-void setting_uart(){
+void setting_uart(){ //Funcao responsavel por configurar o UART
 
-    uart0_filestream = open("/dev/serial0", O_RDWR | O_NOCTTY | O_NDELAY);
+    uart0_filestream = open("/dev/serial0", O_RDWR | O_NOCTTY | O_NDELAY); //Abre arquivo da UART e recebe sua descrição
 
-    if(uart0_filestream == -1){
+    if(uart0_filestream == -1){ //uart0_filestream retorna -1 caso não encontre o arquivo e informa o erro
         printf("Erro na abertura da UART\n");
     }
 
-    struct termios options;
-    tcgetattr(uart0_filestream, &options);
+    struct termios options; //Cria uma struct para configurar o funcionamento da UART
+    tcgetattr(uart0_filestream, &options); //Obtem os parametros associados ao descritor de arquivo e os armazena na struct termios criado anteriormente
 
     options.c_cflag = B9600 | CS8 | CLOCAL | CREAD;
     options.c_iflag = IGNPAR;
