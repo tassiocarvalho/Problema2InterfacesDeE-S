@@ -112,6 +112,11 @@ void setup() {
   pinMode(D0, INPUT);
   pinMode(D1, INPUT);
   pinMode(D2, INPUT);
+  pinMode(D3, INPUT);
+  pinMode(D4, INPUT);
+  pinMode(D5, INPUT);
+  pinMode(D6, INPUT);
+  pinMode(D7, INPUT);
   pinMode(A0, INPUT);
   code_uploaded();
   OTA_setup(); 
@@ -173,15 +178,51 @@ void loop() {
             Serial.write(byte_com);
           }
           break;
-      }
-      break;
-    case 0x11:  //digitais
-      if (digitalRead(D1)==0){
-        byte_com = 0x12;
-        Serial.write(byte_com);
-      }else{
-        byte_com = 0x13;
-        Serial.write(byte_com);
+        case 0x21:
+          if (digitalRead(D3)==0){
+            byte_com = 0x02;
+            Serial.write(byte_com);
+          }else{
+            byte_com = 0x08;
+            Serial.write(byte_com);
+          }
+          break;
+          case 0x22:
+          if (digitalRead(D4)==0){
+            byte_com = 0x02;
+            Serial.write(byte_com);
+          }else{
+            byte_com = 0x08;
+            Serial.write(byte_com);
+          }
+          break;
+          case 0x23:
+          if (digitalRead(D5)==0){
+            byte_com = 0x02;
+            Serial.write(byte_com);
+          }else{
+            byte_com = 0x08;
+            Serial.write(byte_com);
+          }
+          break;
+          case 0x24:
+          if (digitalRead(D6)==0){
+            byte_com = 0x02;
+            Serial.write(byte_com);
+          }else{
+            byte_com = 0x08;
+            Serial.write(byte_com);
+          }
+          break;
+          case 0x25:
+          if (digitalRead(D7)==0){
+            byte_com = 0x02;
+            Serial.write(byte_com);
+          }else{
+            byte_com = 0x08;
+            Serial.write(byte_com);
+          }
+          break;
       }
       break;
     case 0x06:

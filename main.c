@@ -19,12 +19,6 @@ extern void escreverLcd(int a);
 
 int uart0_filestream = -1;
 
-void delay(int seconds){
-    int mili = 1000*seconds;
-    clock_t start_time = clock();
-    while(clock() < start_time + mili);
-}
-
 void escrever_char(char word[]){
 
     for (int i=0; i<strlen(word); i++){
@@ -53,8 +47,8 @@ void setting_uart(){
 }
 
 void commando_tx(unsigned char com, unsigned char addr){
-    printf("com: %d\n", com);
-    printf("addr: %d\n", addr);
+    //printf("com: %d\n", com);
+    //printf("addr: %d\n", addr);
     unsigned char tx_buffer[10];
     unsigned char *p_tx_buffer;
 
@@ -64,7 +58,7 @@ void commando_tx(unsigned char com, unsigned char addr){
 
 if (uart0_filestream != -1){
     int cont = write(uart0_filestream, &tx_buffer[0], (p_tx_buffer - &tx_buffer[0]));
-        printf("cont: %d\n", cont);
+        //printf("cont: %d\n", cont);
     if(cont < 0){
         printf("Erro no envio de dados\n");
                 }
@@ -75,7 +69,7 @@ unsigned char comando_rx(){
     unsigned char rx_buffer[100];
     int rx_length = read(uart0_filestream, (void*)rx_buffer, 100);
 
-        printf("tamanho do buffer: %d\n", rx_length);
+        //printf("tamanho do buffer: %d\n", rx_length);
     if (rx_length < 0){
         printf("Erro na leitura\n");
         escrever_char("Status: Problema");
@@ -85,7 +79,7 @@ unsigned char comando_rx(){
     }
     else{
         rx_buffer[rx_length] = '\0';
-        printf("%s",rx_buffer);
+        //printf("%s",rx_buffer);
     }
         if(rx_buffer[0] == 0x00){
         escrever_char("Status: ok!");
@@ -96,9 +90,9 @@ unsigned char comando_rx(){
         }else if(rx_buffer[0] == 0x51){
         escrever_char("Led apagada");
         }else if(rx_buffer[0] == 0x02){
-        escrever_char("LVL Sensor: 1");
-        }else if(rx_buffer[0] == 0x08){
         escrever_char("LVL Sensor: 0");
+        }else if(rx_buffer[0] == 0x08){
+        escrever_char("LVL Sensor: 1");
         }else if(rx_buffer[0] == 0x01){
         escrever_char("Voltagem:");
         rx_buffer[0] = ' ';
@@ -112,6 +106,11 @@ unsigned char addr(){
         printf("[1] -> Sensor D0: \n");
         printf("[2] -> Sensor D1: \n");
         printf("[3] -> Sensor D2: \n");
+        printf("[4] -> Sensor D3: \n");
+        printf("[5] -> Sensor D4: \n");
+        printf("[6] -> Sensor D5: \n");
+        printf("[7] -> Sensor D6: \n");
+        printf("[8] -> Sensor D7: \n");
         scanf("%d", &valor);
         switch(valor){
         case 1:{
@@ -122,6 +121,21 @@ unsigned char addr(){
                 }
         case 3:{
                 return 0x20;
+        }
+        case 4:{
+                return 0x21;
+        }
+        case 5:{
+                return 0x22;
+        }
+        case 6:{
+                return 0x23;
+        }
+        case 7:{
+                return 0x24;
+        }
+        case 8:{
+                return 0x25;
         }
         default:{
                 printf("Valor inválido\n\n");
