@@ -8,41 +8,41 @@
 .global mapear
 
 .macro setOut pin
-        ldr r2, =\pin
-        ldr r2, [r2]
-        ldr r1, [r8, r2]
-        ldr r3, =\pin
-        add r3, #4
-        ldr r3, [r3]
-        mov r0, #0b111
-        lsl r0, r3
-        bic r1, r0
-        mov r0, #1
-        lsl r0, r3
-        orr r1, r0
-        str r1, [r8, r2]
+    LDR R2, =\pin
+    LDR R2, [R2]
+    LDR R1, [R8, R2]
+    LDR R3, =\pin
+    ADD R3, #4
+    LDR R3, [R3]
+    MOV R0, #0b111
+    LSL R0, R3
+    BIC R1, R0
+    MOV R0, #1
+    LSL R0, R3
+    ORR R1, R0
+    STR R1, [R8, R2]
 .endm
 
 
 mapear:
 
-    ldr r0, =fileName
-    mov r2, #0x1b0
-    orr r2, #0x006
-    mov r1, r2
-    mov r7, #sys_open
-    swi 0
-    movs r4, r0
+    LDR R0, =fileName
+    MOV R2, #0x1b0
+    ORR R2, #0x006
+    MOV R1, R2
+    MOV R7, #sys_open
+    SWI 0
+    MOVS R4, R0
 
-    ldr r5, =gpioaddr
-    ldr r5, [r5]
-    mov r1, #page_len
-    mov r2, #(prot_read + prot_write)
-    mov r3, #map_shared
-    mov r0, #0
-    mov r7, #sys_map
-    swi 0
-    movs r8, r0
+    LDR R5, =gpioaddr
+    LDR R5, [R5]
+    MOV R1, #page_len
+    MOV R2, #(prot_read + prot_write)
+    MOV R3, #map_shared
+    MOV R0, #0
+    MOV R7, #sys_map
+    SWI 0
+    MOVS R8, R0
 
     setOut rs
     setOut e
@@ -51,7 +51,7 @@ mapear:
     setOut db6
     setOut db7
 
-    bx lr
+   BX LR
 
 .data
 fileName: .asciz "/dev/mem"     @Diretório usado para o mapeamento de memória

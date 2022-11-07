@@ -122,8 +122,6 @@ void setup() {
   pinMode(A0, INPUT);
   code_uploaded();
   OTA_setup(); 
-  byte_com = -1;
-  byte_addr = -1;
   pinMode(LED_BUILTIN,OUTPUT);
   digitalWrite(LED_BUILTIN,HIGH);
   Serial.begin(9600);
@@ -147,7 +145,7 @@ void loop() {
       break;
     case 0x04: //analógica
       digitalWrite(LED_BUILTIN,HIGH);
-      voltagem = analogRead(A0)*(3.3/1023.0);
+      voltagem = analogRead(A0)*(3.3/1023.0); //covertendo o valor de 1024 para voltagem 
       byte_com = 0x01;
       Serial.write(byte_com);
       Serial.print(voltagem);

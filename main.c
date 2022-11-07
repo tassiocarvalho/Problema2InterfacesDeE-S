@@ -47,7 +47,7 @@ void setting_uart(){ //Funcao responsavel por configurar o UART
 }
 
 void commando_tx(unsigned char com, unsigned char addr){ //Funcao para envio dos bytes, tem como parametro o byte do comando e o de endereco
-    
+
     unsigned char tx_buffer[10]; //Cria array de bytes
     unsigned char *p_tx_buffer; //Cria ponteiro para apontar pra array
 
@@ -57,7 +57,7 @@ void commando_tx(unsigned char com, unsigned char addr){ //Funcao para envio dos
 
     if (uart0_filestream != -1){ //Se encontrar o arquivo
         int cont = write(uart0_filestream, &tx_buffer[0], (p_tx_buffer - &tx_buffer[0])); //Chama a funcao que enviar os dados via serial tendo como parametro a descricao do arquivo e quantidade de bytes
-    
+
     } else { //Se não encontrar o arquivo printa o erro
         printf("Erro no envio de dados\n");
     }
@@ -74,7 +74,7 @@ unsigned char comando_rx(){ //Funcao responsavel por receber os dados via serial
     else if(rx_length == 0){ //Se não houver erro mas não tiver dados para ler printa a mensagem
         printf("Nenhum dado disponível\n");
     }
-    else{ //Se não houver erro e tiver dados 
+    else{ //Se não houver erro e tiver dados
         rx_buffer[rx_length] = '\0'; //Coloca o byte '\0' para finalizar a string no segundo byte
     }
 
@@ -159,12 +159,11 @@ int main(int argc, const char * argv[]){ //Funcao principal do codigo
         printf("[3] -> Estado do sensores digitais;\n");
         printf("[4] -> Ligar Led;\n");
         printf("[5] -> Apagar Led;\n");
-        printf("[6] -> Limpar display;\n");
         printf("[7] -> Sair.\n");
         printf("#----------------------------------------#\n");
         scanf("%d", &valor); //Entrada de dados do usuario
 
-        if(valor == 7 ){ //Opcao para sair do programa
+        if(valor == 6 ){ //Opcao para sair do programa
             break;
         }
 
@@ -203,10 +202,6 @@ int main(int argc, const char * argv[]){ //Funcao principal do codigo
                 clear();
                 sleep(2);
                 comando_rx();
-                break;
-            }
-            case 6:{ //Limpa LCD
-                clear();
                 break;
             }
 
