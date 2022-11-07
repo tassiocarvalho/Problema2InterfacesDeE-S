@@ -3,6 +3,7 @@
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
 
+//Definicoes
 #ifndef STASSID
 #define STASSID "INTELBRAS"
 #define STAPSK  "Pbl-Sistemas-Digitais"
@@ -12,6 +13,7 @@
 unsigned char comResposta = 0x00;
 unsigned char addrResposta = 0x00;
 
+//Variaveis
 byte byte_com;
 byte byte_addr;
 float voltagem;
@@ -24,12 +26,11 @@ IPAddress subnet(255, 255, 0, 0);
 // Nome do ESP na rede
 const char* host = "ESP-10.0.0.109";
 
-
+//Constantes e variaveis
 const char* ssid = STASSID;
 const char* password = STAPSK;
 
-
-
+//Funcao para ligar e desligar a LED do NodeMCU em loop
 void code_uploaded(){
   for(int i=0;i<2;i++){
     digitalWrite(LED_BUILTIN,LOW);
@@ -109,6 +110,7 @@ void OTA_setup(){
 }
 
 void setup() {
+  //definindo pinos de entradas
   pinMode(D0, INPUT);
   pinMode(D1, INPUT);
   pinMode(D2, INPUT);
@@ -136,11 +138,12 @@ void loop() {
     byte_addr = Serial.read();
   }
 
-
+    //switch case de comando
     switch(byte_com){
+    //caso que verifica se o comando de status ok do nodeMCU
     case 0x03:
       byte_com = 0x00;
-      Serial.write(byte_com);
+      Serial.write(byte_com);    //escreve o byte de resposta ao raspberry
       break;
     case 0x04: //analógica
       digitalWrite(LED_BUILTIN,HIGH);
