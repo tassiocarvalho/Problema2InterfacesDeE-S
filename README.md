@@ -73,8 +73,28 @@ $ sudo ./main
 
 <h1 id="metodologia-e-tecnicas-aplicadas" align="center">Metodologia e técnicas aplicadas no projeto</h1> 
 
+A disciplina TEC 499 - Sistemas Digitas ofertado na Universidade Estadual de Feira de Santana (UEFS) possui a singularidade de ter como método de ensino o PBL (Problem-based Learning ou Aprendizado Baseado em Problemas). Este método em específico propõe discussões sobre os problemas entre os alunos, essas conversas os orientam a implementar, no caso da disciplina TEC499 - Sistemas Digitais, o problema encontrado neste documento. 
+
+Além do PBL, e de muita conversa e discussões com colegas, a leitura de datasheets foi essencial para o funcionamento dos recursos oferecidos. 
+Como resultado as técnicas aplicadas como a utilização de bibliotecas em Assembly (feitas no primeiro problema proposto) e bibliotecas, como ArduinoOTA.h responsável pela comunicação wifi com o NodeMCU dentre outras, foram de fundamental importância para a entrega do sistema contendo: 
+
+• Códigos escrito na linguagem de programação C;
+
+• Possibilitando interligar até 32 sensores;
+
+• Podendo controlar o status de funcionamento e monitoramento dos sensores;
+
+• O SBC sendo capaz de iniciar a comunicação;
+
+• Comandos oriundos do NodeMCU compostos por 8bit e requisições do SBC compostos de 2 bytes e
+
+• Os resultados sendo exibidos no display LCD.
+
+
 <h1 id="descricao-do-sistema" align="center">Descrição em alto nível do sistema proposto</h1> 
+
 O código solicitado no problema pediu um protótipo de um sistema sensorial genérico, utilizando da NodeMCU para confecção das unidades de sensoriamento, podendo serem utilizados tanto sensores digitais quanto analógicos tendo a possibilidade de permitir a substituição. Ademais, o sistema deve ser capaz de controlar o acionamento de sensores como também de fazer o seu monitoramento de forma automatizada, sendo essencial utilizar a comunicação UART para o processo.
+
 O protótipo entregue neste trabalho atende os requisitos principais como ser capaz de interligar até 32 sensores, informa o status de funcionamento, somente o SBC é capaz de iniciar a comunicação, os comandos são compostos por palavras de 8 bits e as requisições por 2 bytes, além dos resultados estarem disponíveis no LCD facilitando a visualização do usuário dos resultados.
 
 O diagrama de blocos a seguir ilustra o sistema:
@@ -82,6 +102,7 @@ O diagrama de blocos a seguir ilustra o sistema:
 
 
 <h1 id="descricao-do-protocolo-de-comunicacao" align="center">Descrição do protocolo de comunicação desenvolvido</h1> 
+
 O protocolo de comunicação final consiste nos links em anexo a seguir:
 
 [Comandos de requisição](https://user-images.githubusercontent.com/71518539/200840661-2ea4f7d0-d4e0-47cc-8f7f-aa26fa3572b2.png)
@@ -110,11 +131,16 @@ Para a elaboração do sistema foi necessário a execução de três testes pont
 * <a href="https://github.com/AlanaSampaio">Alana Sampaio</a>  
 * <a href="https://github.com/tassiocarvalho">Tassio Carvalho</a>
 
+
 <h1 id="referencias" align="center">Referências</h1> 
+
 [Stephen Smith - Raspberry Pi Assembly Language Programming](https://link.springer.com/book/10.1007/978-1-4842-5287-1)
 
-
 [HD44780U (LCD-16x2)](https://www.sparkfun.com/datasheets/LCD/HD44780.pdf)
+
+[BCM2835 ARM Peripherals](https://www.raspberrypi.org/app/uploads/2012/02/BCM2835-ARM-Peripherals.pdf)
+
+[ARM1176JZF-S Technical Reference Manual](https://developer.arm.com/documentation/ddi0301/h?lang=en)
 
 [Datasheet - ESP8266](https://www.alldatasheet.com/view.jsp?Searchword=ESP8266&sField=4&gclid=Cj0KCQiAmaibBhCAARIsAKUlaKRSP5JzpmlF9JPnfCkdjKYD79a6Dcb_OL1NOG1STKnfcAP_e4Yg6s4aAjbzEALw_wcB)
 
