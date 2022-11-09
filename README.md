@@ -2,9 +2,9 @@
 
 <h2> Sumário </h2>  
 
-• <a href="#introducao">Introdução/a> 
+• <a href="#introducao">Introdução</a> 
 
-• <a href="#recursos">Recursos utilizados/a> 
+• <a href="#recursos">Recursos utilizados</a> 
 
 • <a href="#script-de-compilacao">Script de compilação</a> 
 
@@ -59,7 +59,7 @@ makefile
 mapear.s
 ```
 
-• A pasta nomeada como *EspUart* deverá ser aberta no software Arduino e em seguida compilado na plataforma.
+• A pasta nomeada como *EspUart* deverá ser aberta no software Arduino e em seguida compilado na plataforma e faz o upload.
 
 • Por fim, execute os seguintes comandos: 
 
@@ -74,8 +74,13 @@ $ sudo ./main
 <h1 id="metodologia-e-tecnicas-aplicadas" align="center">Metodologia e técnicas aplicadas no projeto</h1> 
 
 <h1 id="descricao-do-sistema" align="center">Descrição em alto nível do sistema proposto</h1> 
+O código solicitado no problema pediu um protótipo de um sistema sensorial genérico, utilizando da NodeMCU para confecção das unidades de sensoriamento, podendo serem utilizados tanto sensores digitais quanto analógicos tendo a possibilidade de permitir a substituição. Ademais, o sistema deve ser capaz de controlar o acionamento de sensores como também de fazer o seu monitoramento de forma automatizada, sendo essencial utilizar a comunicação UART para o processo.
+O protótipo entregue neste trabalho atende os requisitos principais como ser capaz de interligar até 32 sensores, informa o status de funcionamento, somente o SBC é capaz de iniciar a comunicação, os comandos são compostos por palavras de 8 bits e as requisições por 2 bytes, além dos resultados estarem disponíveis no LCD facilitando a visualização do usuário dos resultados.
+
 
 <h1 id="descricao-do-protocolo-de-comunicacao" align="center">Descrição do protocolo de comunicação desenvolvido</h1> 
+O protocolo de comunicação final consiste em:
+
 
 <h1 id="descricao-e-analise-dos-testes" align="center">Descrição e análise dos testes e simuações</h1> 
 
@@ -85,4 +90,10 @@ $ sudo ./main
 * <a href="https://github.com/tassiocarvalho">Tassio Carvalho</a>
 
 <h1 id="referencias" align="center">Referências</h1> 
+[Stephen Smith - Raspberry Pi Assembly Language Programming](https://link.springer.com/book/10.1007/978-1-4842-5287-1)
+
+
+[HD44780U (LCD-16x2)](https://www.sparkfun.com/datasheets/LCD/HD44780.pdf)
+
+[Datasheet - ESP8266](https://www.alldatasheet.com/view.jsp?Searchword=ESP8266&sField=4&gclid=Cj0KCQiAmaibBhCAARIsAKUlaKRSP5JzpmlF9JPnfCkdjKYD79a6Dcb_OL1NOG1STKnfcAP_e4Yg6s4aAjbzEALw_wcB)
 
