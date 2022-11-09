@@ -77,12 +77,33 @@ $ sudo ./main
 O código solicitado no problema pediu um protótipo de um sistema sensorial genérico, utilizando da NodeMCU para confecção das unidades de sensoriamento, podendo serem utilizados tanto sensores digitais quanto analógicos tendo a possibilidade de permitir a substituição. Ademais, o sistema deve ser capaz de controlar o acionamento de sensores como também de fazer o seu monitoramento de forma automatizada, sendo essencial utilizar a comunicação UART para o processo.
 O protótipo entregue neste trabalho atende os requisitos principais como ser capaz de interligar até 32 sensores, informa o status de funcionamento, somente o SBC é capaz de iniciar a comunicação, os comandos são compostos por palavras de 8 bits e as requisições por 2 bytes, além dos resultados estarem disponíveis no LCD facilitando a visualização do usuário dos resultados.
 
+O diagrama de blocos a seguir ilustra o sistema:
+[Diagrama de bloco](https://user-images.githubusercontent.com/71518539/200841372-504ebc4e-6fa8-4bbc-a782-b62e27942e8c.jpeg)
+
 
 <h1 id="descricao-do-protocolo-de-comunicacao" align="center">Descrição do protocolo de comunicação desenvolvido</h1> 
-O protocolo de comunicação final consiste em:
+O protocolo de comunicação final consiste nos links em anexo a seguir:
+
+[Comandos de requisição](https://user-images.githubusercontent.com/71518539/200840661-2ea4f7d0-d4e0-47cc-8f7f-aa26fa3572b2.png)
+
+[Comandos de resposta](https://user-images.githubusercontent.com/71518539/200840832-d2597d5d-23d9-4902-85ef-ad30c634c848.png)
 
 
-<h1 id="descricao-e-analise-dos-testes" align="center">Descrição e análise dos testes e simuações</h1> 
+<h1 id="descricao-e-analise-dos-testes" align="center">Descrição e análise dos testes e simuações</h1>
+
+Para a elaboração do sistema foi necessário a execução de três testes pontuais sendo eles detalhados a seguir:
+
+<h3>Primeiro teste</h3>
+• Inicialmente a tentativa de fazer a comunicação serial entre o RaspBerry Pi 0 e o ESP8266, sem necessidade de retorno da esp neste momento, tendo como sinal de teste bem sucedido a LED do NodeMCU acender.
+
+<h3>Segundo teste</h3>
+• Em seguida, o retorno da ESP8266 se tornou necessário, além de acender a LED também informar no LCD a mensagem que a luz estava acesa.
+
+<h3>Terceiro teste</h3>
+• Por fim, com o sucesso dos testes anteriores, os protocolos foram implementados e seus respectivos endereços sendo utilizados na comunicação UART já estabelecida e encaminhando mensagens no LCD de acordo ao que foi solicitado.
+
+• Segue anexo link demonstrativo dos testes:
+[Vídeo demonstrativo](https://www.youtube.com/watch?v=6NcB-otOF_s)
 
 <h1 id="membros" align="center">Membros</h1> 
 
