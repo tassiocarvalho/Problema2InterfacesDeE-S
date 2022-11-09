@@ -226,13 +226,13 @@ void loop() {
           break;
       }
       break;
-    case 0x06:
+    case 0x06: //LED acesa
       delay(1);
       digitalWrite(LED_BUILTIN,LOW);
       byte_com = 0x50;
       Serial.write(byte_com);
       break;
-    case 0x07:
+    case 0x07: //LED Apagada
       delay(1);
       digitalWrite(LED_BUILTIN,HIGH);
       byte_com = 0x51;
