@@ -98,7 +98,8 @@ O código solicitado no problema pediu um protótipo de um sistema sensorial gen
 O protótipo entregue neste trabalho atende os requisitos principais como ser capaz de interligar até 32 sensores, informa o status de funcionamento, somente o SBC é capaz de iniciar a comunicação, os comandos são compostos por palavras de 8 bits e as requisições por 2 bytes, além dos resultados estarem disponíveis no LCD facilitando a visualização do usuário dos resultados.
 
 O diagrama de blocos a seguir ilustra o sistema:
-[Diagrama de bloco](https://user-images.githubusercontent.com/71518539/200841372-504ebc4e-6fa8-4bbc-a782-b62e27942e8c.jpeg)
+![image](https://user-images.githubusercontent.com/90158519/200854839-0ec61c22-9362-4df8-b7b2-feefffa21cfb.png)
+
 
 
 <h1 id="descricao-do-protocolo-de-comunicacao" align="center">Descrição do protocolo de comunicação desenvolvido</h1> 
