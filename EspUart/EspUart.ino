@@ -153,20 +153,20 @@ void loop() {
     case 0x05:  //digitais
       switch(byte_addr){
         case 0x18:
-          if (digitalRead(D0)==0){
-            byte_com = 0x02;
+          if (digitalRead(D0)==0){ //verificando o nivel logico do sensor
+            byte_com = 0x02; //byte de comando para o Raspberry
             Serial.write(byte_com);
-          }else{
-            byte_com = 0x08;
+          }else{ //se for diferente de 0 manda outro byte de comando
+            byte_com = 0x08; //byte de comando para o Raspberry
             Serial.write(byte_com);
           }
           break;
         case 0x19:
-          if (digitalRead(D1)==0){
-            byte_com = 0x02;
+          if (digitalRead(D1)==0){ //verificando o nivel logico do sensor
+            byte_com = 0x02; //byte de comando para o Raspberry
             Serial.write(byte_com);
-          }else{
-            byte_com = 0x08;
+          }else{ //se for diferente de 0 manda outro byte de comando
+            byte_com = 0x08; //byte de comando para o Raspberry
             Serial.write(byte_com);
           }
           break;
@@ -228,14 +228,14 @@ void loop() {
       break;
     case 0x06: //LED acesa
       delay(1);
-      digitalWrite(LED_BUILTIN,LOW);
-      byte_com = 0x50;
+      digitalWrite(LED_BUILTIN,LOW); //acende led
+      byte_com = 0x50; //byte de comando para o Raspberry
       Serial.write(byte_com);
       break;
     case 0x07: //LED Apagada
       delay(1);
-      digitalWrite(LED_BUILTIN,HIGH);
-      byte_com = 0x51;
+      digitalWrite(LED_BUILTIN,HIGH); //apaga led
+      byte_com = 0x51; //byte de comando para o Raspberry
       Serial.write(byte_com);
       break;
   }
